@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DSNS PDF Pro</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <div class="header-row">
+      <div>
+        <div class="product-kicker">DSNS OPS</div>
+        <h1>DSNS PDF Pro</h1>
+      </div>
+      <div class="user-info"><span class="status-dot"></span>Local processing</div>
+    </div>
+    <nav class="tabs" aria-label="DSNS PDF Pro tools">
+      <button class="tab active" type="button" data-mode="merge">Merge Files</button>
+      <button class="tab" type="button" data-mode="images">Images to PDF</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="summary" aria-label="Merge summary">
+      <div><strong id="file-count">0</strong><span id="file-count-label">Files</span></div>
+      <div><strong id="total-size">0 B</strong><span>Total size</span></div>
+      <div><strong id="output-state">Not ready</strong><span>Output</span></div>
+    </section>
+
+    <section class="workspace" aria-labelledby="workspace-title">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">Merge queue</div>
+          <h2 id="workspace-title">Selected files</h2>
+        </div>
+        <div class="toolbar">
+          <button id="open-button" class="button secondary" type="button">Open files</button>
+          <button id="clear-button" class="icon-button" type="button" title="Clear selected files" aria-label="Clear selected files" disabled>×</button>
+          <input id="file-input" type="file" accept="application/pdf,image/jpeg,image/png,.pdf,.jpg,.jpeg,.png" multiple hidden>
+        </div>
+      </div>
+
+      <div id="drop-zone" class="drop-zone">
+        <div id="drop-mark" class="drop-mark">FILES</div>
+        <div>
+          <strong id="drop-title">Choose PDF or image files</strong>
+          <span id="drop-description">PDF, JPG, JPEG, and PNG files merge in the order shown below</span>
+        </div>
+      </div>
+
+      <ol id="file-list" class="file-list" aria-live="polite"></ol>
+      <p id="empty-state" class="empty-state">No files selected.</p>
+    </section>
+
+    <section id="image-settings" class="settings-panel" aria-labelledby="settings-title" hidden>
+      <div class="settings-heading">
+        <div class="section-kicker">Page layout</div>
+        <h2 id="settings-title">Image conversion settings</h2>
+      </div>
+      <div class="settings-grid">
+        <label class="field">
+          <span>Page size</span>
+          <select id="page-size">
+            <option value="a4" selected>A4</option>
+            <option value="letter">Letter</option>
+            <option value="image">Image size</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Orientation</span>
+          <select id="orientation">
+            <option value="auto" selected>Auto</option>
+            <option value="portrait">Portrait</option>
+            <option value="landscape">Landscape</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Margin (mm)</span>
+          <input id="margin-mm" type="number" min="0" max="50" step="1" value="8">
+        </label>
+        <label class="field">
+          <span>Image fit</span>
+          <select id="image-fit">
+            <option value="contain" selected>Fit inside page</option>
+            <option value="cover">Fill page</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Transparent background</span>
+          <select id="background">
+            <option value="white" selected>White</option>
+            <option value="black">Black</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="output-panel" aria-labelledby="output-title">
+      <div>
+        <div class="section-kicker">Destination</div>
+        <h2 id="output-title">Merged document</h2>
+      </div>
+      <label class="name-field">
+        <span>File name</span>
+        <input id="output-name" type="text" value="merged.pdf" maxlength="180" spellcheck="false">
+      </label>
+      <button id="merge-button" class="button primary" type="button" disabled>Merge &amp; Save</button>
+    </section>
+
+    <div id="progress" class="progress" hidden aria-hidden="true"><span></span></div>
+    <div id="message" class="message" role="status" aria-live="polite"></div>
+  </main>
+
+  <script src="/static/workflows.js"></script>
+</body>
+</html>

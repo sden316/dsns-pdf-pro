@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dsns-pdf-pro"
+version = "0.1.0"
+description = "A local web app for merging PDFs and images and converting images to PDF."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [
+  { name = "Srini Denduluri", email = "sden316@users.noreply.github.com" }
+]
+keywords = ["pdf", "merge", "images", "converter", "flask"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Operating System :: Microsoft :: Windows",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Topic :: Office/Business",
+  "Topic :: Utilities",
+]
+dependencies = [
+  "Flask==3.1.1",
+  "pypdf==6.1.1",
+  "Pillow==11.3.0",
+  "reportlab==4.4.3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==8.4.1"]
+
+[project.urls]
+Homepage = "https://github.com/sden316/dsns-pdf-pro"
+Repository = "https://github.com/sden316/dsns-pdf-pro"
+Issues = "https://github.com/sden316/dsns-pdf-pro/issues"
+
+[tool.pytest.ini_options]
+testpaths = ["test_app.py"]

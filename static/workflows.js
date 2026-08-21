@@ -52,6 +52,7 @@ const state = {
 
 const elements = {
   background: document.querySelector("#background"),
+  blankButton: document.querySelector("#blank-button"),
   clearButton: document.querySelector("#clear-button"),
   dropDescription: document.querySelector("#drop-description"),
   dropMark: document.querySelector("#drop-mark"),
@@ -124,6 +125,7 @@ function setBusy(busy) {
   const ready = files.length >= currentConfig().minimumFiles;
   elements.progress.hidden = !busy;
   elements.progress.setAttribute("aria-hidden", String(!busy));
+  elements.blankButton.disabled = busy;
   elements.openButton.disabled = busy;
   elements.clearButton.disabled = busy || files.length === 0;
   elements.mergeButton.disabled = busy || !ready;
@@ -208,17 +210,34 @@ function moveFile(from, to) {
   render();
 }
 
-async function chooseSaveHandle() {
-  if (!("showSaveFilePicker" in window)) {
+async function chooseSaveHandle(fileName = outputFileName()) {
+  if (typeof window.showSaveFilePicker !== "function") {
     return null;
   }
   return window.showSaveFilePicker({
-    suggestedName: outputFileName(),
+    suggestedName: fileName,
     types: [{
       description: "PDF document",
       accept: { "application/pdf": [".pdf"] },
     }],
   });
+}
+
+async function saveBlob(blob, saveHandle, fileName) {
+  if (saveHandle) {
+    const writable = await saveHandle.createWritable();
+    await writable.write(blob);
+    await writable.close();
+    setMessage(`Saved ${fileName} (${formatBytes(blob.size)}).`, "success");
+  } else {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(url);
+    setMessage(`Download started for ${fileName}.`, "success");
+  }
 }
 
 function appendImageOptions(formData) {
@@ -259,20 +278,7 @@ async function processAndSave() {
     }
 
     const blob = await response.blob();
-    if (saveHandle) {
-      const writable = await saveHandle.createWritable();
-      await writable.write(blob);
-      await writable.close();
-      setMessage(`Saved ${outputFileName()} (${formatBytes(blob.size)}).`, "success");
-    } else {
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = outputFileName();
-      link.click();
-      URL.revokeObjectURL(url);
-      setMessage(`Download started for ${outputFileName()}.`, "success");
-    }
+    await saveBlob(blob, saveHandle, outputFileName());
   } catch (error) {
     setMessage(error.message, "error");
   } finally {
@@ -281,10 +287,43 @@ async function processAndSave() {
   }
 }
 
+async function createBlankPdf() {
+  const fileName = "blank.pdf";
+  let saveHandle;
+  try {
+    saveHandle = await chooseSaveHandle(fileName);
+  } catch (error) {
+    if (error.name === "AbortError") {
+      setMessage("Save canceled.");
+      return;
+    }
+    setMessage(`Could not choose the output location: ${error.message}`, "error");
+    return;
+  }
+
+  setBusy(true);
+  setMessage("Creating a blank A4 PDF...");
+  try {
+    const formData = new FormData();
+    formData.append("output_name", fileName);
+    const response = await fetch("/api/blank-pdf", { method: "POST", body: formData });
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      throw new Error(body.error || `Processing failed with HTTP ${response.status}.`);
+    }
+    await saveBlob(await response.blob(), saveHandle, fileName);
+  } catch (error) {
+    setMessage(error.message, "error");
+  } finally {
+    setBusy(false);
+  }
+}
+
 document.querySelectorAll("button[data-mode]").forEach((button) => {
   button.addEventListener("click", () => switchMode(button.dataset.mode));
 });
 elements.openButton.addEventListener("click", () => elements.fileInput.click());
+elements.blankButton.addEventListener("click", createBlankPdf);
 elements.dropZone.addEventListener("click", () => elements.fileInput.click());
 elements.fileInput.addEventListener("change", () => addFiles(elements.fileInput.files));
 elements.outputName.addEventListener("input", () => {

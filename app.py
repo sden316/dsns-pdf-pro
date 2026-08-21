@@ -184,6 +184,18 @@ def build_output(uploads, *, image_only: bool) -> io.BytesIO:
         writer.close()
 
 
+def build_blank_pdf() -> io.BytesIO:
+    writer = PdfWriter()
+    try:
+        writer.add_blank_page(width=A4[0], height=A4[1])
+        output = io.BytesIO()
+        writer.write(output)
+        output.seek(0)
+        return output
+    finally:
+        writer.close()
+
+
 @app.get("/")
 def index():
     return app.send_static_file("index.html")
@@ -222,6 +234,17 @@ def images_to_pdf():
         mimetype="application/pdf",
         as_attachment=True,
         download_name=safe_output_name(request.form.get("output_name") or "images.pdf"),
+        max_age=0,
+    )
+
+
+@app.post("/api/blank-pdf")
+def blank_pdf():
+    return send_file(
+        build_blank_pdf(),
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name=safe_output_name(request.form.get("output_name") or "blank.pdf"),
         max_age=0,
     )
 

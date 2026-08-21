@@ -124,5 +124,18 @@ def test_images_to_pdf_supports_transparency_and_landscape_letter():
     ]
 
 
+def test_blank_pdf_creates_one_a4_page():
+    client = app.test_client()
+    response = client.post("/api/blank-pdf", data={"output_name": "notes"})
+
+    assert response.status_code == 200
+    assert response.mimetype == "application/pdf"
+    assert response.headers["Content-Disposition"] == "attachment; filename=notes.pdf"
+    reader = PdfReader(io.BytesIO(response.data))
+    assert len(reader.pages) == 1
+    page = reader.pages[0]
+    assert (round(float(page.mediabox.width)), round(float(page.mediabox.height))) == (595, 842)
+
+
 def test_output_name_is_sanitized():
     assert safe_output_name("../quarter:final") == "quarter_final.pdf"

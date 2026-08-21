@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB.svg)](https://www.python.org/)
 
-Lightweight local Flask application for merging PDF and image files in a browser-selected order. Its visual language matches Grafana Migration Verifier.
+Lightweight local Flask application for merging PDF and image files, converting images to PDF, and generating a blank PDF page. Its visual language matches Grafana Migration Verifier.
 
 The project lives at `Productivity/projects/pdf-pro` and displays **DSNS OPS** branding in the application header.
 
@@ -14,13 +14,20 @@ The project lives at `Productivity/projects/pdf-pro` and displays **DSNS OPS** b
 
 - **Merge Files** combines PDF, JPG, JPEG, and PNG files in one ordered queue.
 - **Images to PDF** converts one or more JPG, JPEG, or PNG images into a PDF.
+- **Blank PDF** creates a single-page blank portrait A4 document without requiring an input file.
 - **Merge Files** requires at least two files; **Images to PDF** requires at least one image.
 - Reorder or remove files independently in either tab. Queues and output names are retained when switching tabs.
 - Configure image page size, orientation, margins, fit mode, and transparent-pixel background.
 - Apply EXIF orientation automatically before conversion.
 - Merge entirely through the local Flask process without retaining uploads.
-- Choose the output filename and destination with Microsoft Edge's native save picker.
+- Choose the output filename and destination for merged and converted documents with Microsoft Edge's native save picker. Blank documents use `blank.pdf` as the suggested name.
 - Fall back to a normal browser download when the File System Access API is unavailable.
+
+## Usage
+
+- Select **Merge Files**, add at least two PDF or image files, arrange them in output order, choose a filename, and select **Merge & Save**.
+- Select **Images to PDF**, add one or more images, configure the page layout, choose a filename, and select **Convert & Save**.
+- Select **Blank PDF** from either tab to create and save one blank portrait A4 page as `blank.pdf`.
 
 ## Image layout
 

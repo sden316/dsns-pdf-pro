@@ -29,7 +29,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest==8.4.1"]
+dev = ["pytest==9.1.1"]
 
 [project.urls]
 Homepage = "https://github.com/sden316/dsns-pdf-pro"
